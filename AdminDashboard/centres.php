@@ -53,8 +53,8 @@ if (isset($_SESSION['id_admine'])) {
                                 $search = '';
                                 if (isset($_GET['search-btn'])) {
                                     $search = trim($_GET['search']);
-                                    $req2 .= " and  (nom_centre like '%$search%' or ville_centre  like '%$search%' )";
-                                    $req .= "  and  (nom_centre like '%$search%' or ville_centre  like '%$search%'  )";
+                                    $req2 .= " where  (nom_centre like '%$search%' or ville_centre  like '%$search%' )";
+                                    $req .= "  where  (nom_centre like '%$search%' or ville_centre  like '%$search%'  )";
                                 }
                                 $req .= " ORDER BY nom_centre ASC";
                                 ?>
