@@ -133,7 +133,7 @@ if (isset($_SESSION['id_admine'])) {
                                 <div class="form-group mb-4">
                                     <div class="row">
                                         <div class="col"><input type="email" name="email" class="form-control"
-                                                placeholder="Enter email du médecin required"></div>
+                                                placeholder="Enter email du médecin "required></div>
                                     </div>
                                     <div class="row mt-2">
                                         <div class="col-sm-6 mb-4 search d-flex align-items-center justify-content-between">
