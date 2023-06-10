@@ -105,6 +105,10 @@
           <i class="fa-solid fa-stethoscope nav_icon"></i>
           <span class="nav_name">Medecins</span>
         </a>
+        <a href="centres.php" class="nav_link">
+        <i class="fa-solid fa-hospital"></i>
+          <span class="nav_name">Centres</span>
+        </a>
         <a href="projets.php" class="nav_link">
           <i class="fa-solid fa-calendar-plus nav_icon"></i>
           <span class="nav_name">Campagnes</span>
