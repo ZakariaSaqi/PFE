@@ -81,7 +81,7 @@ if (isset($_SESSION['id_admine'])) {
                             </thead>
                             <tbody>
                                 <?php
-                                $num_per_page = 6;
+                                $num_per_page = 10;
                                 if (isset($_GET["page"])) {
                                     $page = $_GET["page"];
                                 } else {
