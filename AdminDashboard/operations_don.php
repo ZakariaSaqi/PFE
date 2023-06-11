@@ -96,7 +96,7 @@ if (isset($_GET['action'])) {
 
 <div class="row">
   <div class="col-md-10 mb-3">
-    <h1 class="page-title">Demande</h1>
+    <h1 class="page-title">Don</h1>
   </div>
   <?php
   $req = " SELECT    do.id_don as iddon , do.date_don as datedon , c.nom_centre as centre , m.nom_medecin as nommed,

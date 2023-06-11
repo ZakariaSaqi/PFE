@@ -43,7 +43,7 @@ if (isset($_SESSION['id_admine'])) {
                                 </div>
                                 <div class="col-sm-4">
                                     <button class="btn add">
-                                        <a href="ajouterMedecin.php" class=" text-decoration-none">Ajouter centre</a>
+                                        <a href="ajouterCentre.php" class=" text-decoration-none">Ajouter centre</a>
                                     </button>
                                 </div>
                                 <?php
@@ -110,14 +110,14 @@ if (isset($_SESSION['id_admine'])) {
                                             </td>
                                             </td>
                                             <td class="d-flex justify-content-around align-items-center">
-                                                <a href="operations_medecin.php?action=view&id=<?= $data['id_centre'] ?>" class="view"
-                                                    title="View" data-toggle="tooltip"><i class="fa-solid fa-user"
+                                                <a href="operations_centre.php?action=view&id=<?= $data['id_centre'] ?>" class="view"
+                                                    title="View" data-toggle="tooltip"><i class="fa-solid fa-circle-info"
                                                         onclick="ShowProfil()"></i></a>
-                                                <a href="operations_medecin.php?action=Edit&id=<?= $data['id_centre'] ?>" class="edit"
-                                                    title="Edit" data-toggle="tooltip"><i class="fa-solid fa-user-pen"></i></a>
-                                                <a href="operations_medecin.php?action=Delete&id=<?= $data['id_centre'] ?>"
+                                                <a href="operations_centre.php?action=Edit&id=<?= $data['id_centre'] ?>" class="edit"
+                                                    title="Edit" data-toggle="tooltip"><i class="fa-solid fa-pen-to-square"></i></a>
+                                                <a href="operations_centre.php?action=Delete&id=<?= $data['id_centre'] ?>"
                                                     class="delete" title="Delete" data-toggle="tooltip"><i
-                                                        class="fa-solid fa-user-xmark"></i></a>
+                                                        class="fa-solid fa-trash"></i></a>
 
                                             </td>
                                         </tr>
