@@ -42,13 +42,13 @@ if (isset($_SESSION['cin'])) {
     <link rel="stylesheet" href="styles.css">
     <style>
       /* .person {
-          position: relative;
-          width: 23px;
-          height: 23px;
-          border-radius: 50%;
-          overflow: hidden;
+              position: relative;
+              width: 23px;
+              height: 23px;
+              border-radius: 50%;
+              overflow: hidden;
 
-        }*/
+            }*/
 
       .person img {
         cursor: pointer;
@@ -63,9 +63,10 @@ if (isset($_SESSION['cin'])) {
       .person img:hover {
         transform: scale(1.2);
       }
+
       select {
-  width: 300px;
-}
+        width: 300px;
+      }
     </style>
 
   </head>
@@ -77,70 +78,72 @@ if (isset($_SESSION['cin'])) {
       <!-- ======= demandes Section ======= -->
       <section id="demandes" class="demandes ">
         <div class="container mt-5" data-aos="fade-up">
-        <?php
-  $req2 = "SELECT m.cin_membre, d.type_sang AS tsangAdmin, m.nom_membre, m.ville, m.prenom_membre, m.type_sang, d.deadline, d.date_demande, d.id_demande, c.nom_centre, c.ville_centre
+          <?php
+          $req2 = "SELECT m.cin_membre, d.type_sang AS tsangAdmin, m.nom_membre, m.ville, m.prenom_membre, m.type_sang, d.deadline, d.date_demande, d.id_demande, c.nom_centre, c.ville_centre
   FROM demande d  
   INNER JOIN membre m ON m.id_membre = d.id_membre
   INNER JOIN centre c ON c.id_centre = d.id_centre
-  WHERE d.deadline > CURDATE()";
-  $req3 = "SELECT m.cin_membre, d.type_sang AS tsangAdmin, m.nom_membre, m.ville, m.prenom_membre, m.type_sang, d.deadline, d.date_demande, d.id_demande, c.nom_centre, c.ville_centre
+  WHERE d.deadline > CURDATE()
+  ";
+          $req3 = "SELECT m.cin_membre, d.type_sang AS tsangAdmin, m.nom_membre, m.ville, m.prenom_membre, m.type_sang, d.deadline, d.date_demande, d.id_demande, c.nom_centre, c.ville_centre
   FROM demande d  
   INNER JOIN membre m ON m.id_membre = d.id_membre
   INNER JOIN centre c ON c.id_centre = d.id_centre
-  WHERE d.deadline > CURDATE() ";
+  WHERE d.deadline > CURDATE() 
+  ";
+
+          // Check if the search form has been submitted
   
-  // Check if the search form has been submitted
-  if (isset($_GET['submit-search'])) {
-    $idc = $_GET['centre'];
-    if ($idc !== "Tous"){
-      $req2 .= " AND c.id_centre = $idc";
-      $req3 .= " AND c.id_centre = $idc";
-    }
+if (isset($_GET['submit-search'])) {
+  $idc = $_GET['centre'];
+  if ($idc !== "Tous") {
+    $req2 .= " AND c.id_centre = $idc";
+    $req3 .= " AND c.id_centre = $idc";
   }
-  // hadi dyl oreder
-  $req3 .= " ORDER BY d.date_demande DESC";
-  $selectedOption = isset($_GET['centre']) ? $_GET['centre'] : "Tous";
+}
+// hadi dyl oreder
+$req3 .= " ORDER BY d.date_demande DESC";
+$selectedOption = isset($_GET['centre']) ? $_GET['centre'] : "Tous";
 ?>
 
-          <header class="section-header ">
-            <h1>Demandes du sang urgents</h1>
-            <h2 class="mb-4">Ces demandes concernent différentes villes du royaume. Vous pouvez choisir une ville spécifique.</h2>
-            <form method="get" class="no-styles">
-  <select name="centre" class="form-control" style="width: max-content; height: 42px; margin-right: 20px;">
-    <?php if (!isset($search_sang)) { ?>
-      <option value="Tous" selected alt="Sélectionné">Tous les centres</option>
-    <?php } else { ?>
-      <option value="Tous">Tous</option>
-    <?php } ?>
-    <?php
-    $req = "SELECT * FROM centre";
-    $res = $pdo->query($req);
-    while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
-      ?>
-      <option value="<?= $row['id_centre'] ?>" <?= isset($selectedOption) && $selectedOption === $row['id_centre'] ? "selected" : "" ?>>
-        <?= $row['nom_centre'] ?>
-      </option>
-    <?php } ?>
-  </select>
+<header class="section-header">
+  <h1>Demandes du sang urgents</h1>
+  <h2 class="mb-4">Ces demandes concernent différentes villes du royaume. Vous pouvez choisir une ville spécifique.</h2>
+  <form method="get" class="no-styles" action="Demandes.php?centre=<?= $selectedOption ?>">
+    <select name="centre" class="form-control" style="width: max-content; height: 42px; margin-right: 20px;">
+      <?php if (!isset($search_sang)) { ?>
+        <option value="Tous" selected alt="Sélectionné">Tous les centres</option>
+      <?php } else { ?>
+        <option value="Tous">Tous</option>
+      <?php } ?>
+      <?php
+      $req = "SELECT * FROM centre";
+      $res = $pdo->query($req);
+      while ($row = $res->fetch(PDO::FETCH_ASSOC)) {
+        ?>
+        <option value="<?= $row['id_centre'] ?>" <?= isset($selectedOption) && $selectedOption === $row['id_centre'] ? "selected" : "" ?>>
+          <?= $row['nom_centre'] ?>
+        </option>
+      <?php } ?>
+    </select>
 
-  <button type="submit" name="submit-search" class="btn">Rechercher</button>
-</form>
+    <button type="submit" name="submit-search" class="btn">Rechercher</button>
+  </form>
+</header>
 
-          </header>
-         
 
 
           <div class="row mt-4 align-items-center justify-content-around ">
             <?php
 
-            $num_per_page = 6;
+            $resultsPerPage = 6;
             if (isset($_GET["page"])) {
               $page = $_GET["page"];
             } else {
               $page = 1;
             }
-            $start_from = ($page - 1) * $num_per_page;
-            $req3 .= " limit $start_from,$num_per_page";
+            $start_from = ($page - 1) * $resultsPerPage;
+            $req3 .= " limit $start_from, $resultsPerPage";
             $res3 = $pdo->query($req3);
             while ($row3 = $res3->fetch(PDO::FETCH_ASSOC)) {
               if ($row3['cin_membre'] == $cin) {
@@ -241,188 +244,188 @@ if (isset($_SESSION['cin'])) {
                   </div>
                 </div>
                 <?php
-              }else if ($row3['nom_membre'] == "Admin"){  ?>
-                <div class="card mb-4">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <p>
-                        <?php
+              } else if ($row3['nom_membre'] == "Admin") { ?>
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between">
+                        <p>
+                          <?php
 
-                        $dateDemande = strtotime($row3['date_demande']);
-                        $currentDate = time();
-                        $secondsDiff = $currentDate - $dateDemande;
+                          $dateDemande = strtotime($row3['date_demande']);
+                          $currentDate = time();
+                          $secondsDiff = $currentDate - $dateDemande;
 
-                        $daysDiff = floor($secondsDiff / (60 * 60 * 24));
+                          $daysDiff = floor($secondsDiff / (60 * 60 * 24));
 
-                        if ($daysDiff == 0) {
+                          if ($daysDiff == 0) {
 
-                          echo "Demande publiee aujourd'hui.";
-                        } else if ($daysDiff == 1) {
-                          echo "Demande publiee hier.";
-                        } else {
-                          echo "Demande publiee il y a " . $daysDiff . " jours.";
-                        }
-                        ?>
-                      </p>
-                    </div>
+                            echo "Demande publiee aujourd'hui.";
+                          } else if ($daysDiff == 1) {
+                            echo "Demande publiee hier.";
+                          } else {
+                            echo "Demande publiee il y a " . $daysDiff . " jours.";
+                          }
+                          ?>
+                        </p>
+                      </div>
 
-                    <div class="header">
-                      <h5 class="">
+                      <div class="header">
+                        <h5 class="">
                         <?= $row3['tsangAdmin'] . "/" . $row3['nom_centre'] ?>
-                      </h5>
+                        </h5>
 
-                    </div>
+                      </div>
 
-                    <div class="person info">
-                      <i class="bi bi-person-circle"></i>
-                      <h2>
-                        Par <?= $row3['nom_membre'] ?>
-                      </h2>
-                    </div>
-                    <div class="local info">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <h2>
+                      <div class="person info">
+                        <i class="bi bi-person-circle"></i>
+                        <h2>
+                          Par
+                        <?= $row3['nom_membre'] ?>
+                        </h2>
+                      </div>
+                      <div class="local info">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <h2>
                         <?= $row3['ville_centre'] ?>
-                      </h2>
-                    </div>
-                    <div class="deadline info ">
-                      <i class="bi bi-hourglass-split"></i>
-                      <h2>Avant
-                        <?= $row3['deadline'] ?> 
-                      </h2>
-                    </div>
+                        </h2>
+                      </div>
+                      <div class="deadline info ">
+                        <i class="bi bi-hourglass-split"></i>
+                        <h2>Avant
+                        <?= $row3['deadline'] ?>
+                        </h2>
+                      </div>
 
-                    <a href="Donner.php?idem=<?= $row3['id_demande'] ?>"
-                      class="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center">
-                      <span>Donner</span>
-                      <i class="bi bi-heart-fill"></i>
-                    </a>
-                    <!-- Icônes de partage social -->
-                    <div class="share-icons mt-2">
-                      <!-- Partager sur Facebook -->
-                      <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #1877F2;" class="share-icon">
-                        <i class="bi bi-facebook"></i>
+                      <a href="Donner.php?idem=<?= $row3['id_demande'] ?>"
+                        class="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center">
+                        <span>Donner</span>
+                        <i class="bi bi-heart-fill"></i>
                       </a>
+                      <!-- Icônes de partage social -->
+                      <div class="share-icons mt-2">
+                        <!-- Partager sur Facebook -->
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #1877F2;" class="share-icon">
+                          <i class="bi bi-facebook"></i>
+                        </a>
 
-                      <!-- Partager sur WhatsApp -->
-                      <a href="https://api.whatsapp.com/send?text=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #25D366;" class="share-icon">
-                        <i class="bi bi-whatsapp"></i>
-                      </a>
+                        <!-- Partager sur WhatsApp -->
+                        <a href="https://api.whatsapp.com/send?text=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #25D366;" class="share-icon">
+                          <i class="bi bi-whatsapp"></i>
+                        </a>
 
-                      <!-- Partager sur Instagram -->
-                      <a href="https://www.instagram.com/?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #E4405F;" class="share-icon">
-                        <i class="bi bi-instagram"></i>
-                      </a>
+                        <!-- Partager sur Instagram -->
+                        <a href="https://www.instagram.com/?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #E4405F;" class="share-icon">
+                          <i class="bi bi-instagram"></i>
+                        </a>
 
-                      <!-- Partager sur Messenger -->
-                      <a href="https://www.messenger.com/share?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #0084FF;" class="share-icon">
-                        <i class="bi bi-messenger"></i>
-                      </a>
+                        <!-- Partager sur Messenger -->
+                        <a href="https://www.messenger.com/share?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #0084FF;" class="share-icon">
+                          <i class="bi bi-messenger"></i>
+                        </a>
 
-                      <!-- Partager par e-mail -->
-                      <a href="mailto:?subject=<?= urlencode('Regardez cet événement') ?>&body=<?= urlencode('Découvrez cet événement intéressant : https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        style="color: #D44638;" class="share-icon">
-                        <i class="bi bi-google"></i>
-                      </a>
+                        <!-- Partager par e-mail -->
+                        <a href="mailto:?subject=<?= urlencode('Regardez cet événement') ?>&body=<?= urlencode('Découvrez cet événement intéressant : https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          style="color: #D44638;" class="share-icon">
+                          <i class="bi bi-google"></i>
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
-              <?php }
-              else {
+              <?php } else {
                 ?>
-                <div class="card mb-4">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                      <p>
-                        <?php
+                  <div class="card mb-4">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between">
+                        <p>
+                          <?php
 
-                        $dateDemande = strtotime($row3['date_demande']);
-                        $currentDate = time();
-                        $secondsDiff = $currentDate - $dateDemande;
+                          $dateDemande = strtotime($row3['date_demande']);
+                          $currentDate = time();
+                          $secondsDiff = $currentDate - $dateDemande;
 
-                        $daysDiff = floor($secondsDiff / (60 * 60 * 24));
+                          $daysDiff = floor($secondsDiff / (60 * 60 * 24));
 
-                        if ($daysDiff == 0) {
+                          if ($daysDiff == 0) {
 
-                          echo "Demande publiee aujourd'hui.";
-                        } else if ($daysDiff == 1) {
-                          echo "Demande publiee hier.";
-                        } else {
-                          echo "Demande publiee il y a " . $daysDiff . " jours.";
-                        }
-                        ?>
-                      </p>
-                    </div>
+                            echo "Demande publiee aujourd'hui.";
+                          } else if ($daysDiff == 1) {
+                            echo "Demande publiee hier.";
+                          } else {
+                            echo "Demande publiee il y a " . $daysDiff . " jours.";
+                          }
+                          ?>
+                        </p>
+                      </div>
 
-                    <div class="header">
-                      <h5 class="">
+                      <div class="header">
+                        <h5 class="">
                         <?= $row3['type_sang'] . "/" . $row3['nom_centre'] ?>
-                      </h5>
+                        </h5>
 
-                    </div>
+                      </div>
 
-                    <div class="person info">
-                      <i class="bi bi-person-circle"></i>
-                      <h2>
+                      <div class="person info">
+                        <i class="bi bi-person-circle"></i>
+                        <h2>
                         <?= $row3['prenom_membre'] . " " . $row3['nom_membre'] ?>
-                      </h2>
-                    </div>
-                    <div class="local info">
-                      <i class="bi bi-geo-alt-fill"></i>
-                      <h2>
+                        </h2>
+                      </div>
+                      <div class="local info">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <h2>
                         <?= $row3['ville_centre'] ?>
-                      </h2>
-                    </div>
-                    <div class="deadline info ">
-                      <i class="bi bi-hourglass-split"></i>
-                      <h2>Avant
-                        <?= $row3['deadline'] ?> 
-                      </h2>
-                    </div>
+                        </h2>
+                      </div>
+                      <div class="deadline info ">
+                        <i class="bi bi-hourglass-split"></i>
+                        <h2>Avant
+                        <?= $row3['deadline'] ?>
+                        </h2>
+                      </div>
 
-                    <a href="Donner.php?idem=<?= $row3['id_demande'] ?>"
-                      class="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center">
-                      <span>Donner</span>
-                      <i class="bi bi-heart-fill"></i>
-                    </a>
-                    <!-- Icônes de partage social -->
-                    <div class="share-icons mt-2">
-                      <!-- Partager sur Facebook -->
-                      <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #1877F2;" class="share-icon">
-                        <i class="bi bi-facebook"></i>
+                      <a href="Donner.php?idem=<?= $row3['id_demande'] ?>"
+                        class="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center">
+                        <span>Donner</span>
+                        <i class="bi bi-heart-fill"></i>
                       </a>
+                      <!-- Icônes de partage social -->
+                      <div class="share-icons mt-2">
+                        <!-- Partager sur Facebook -->
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #1877F2;" class="share-icon">
+                          <i class="bi bi-facebook"></i>
+                        </a>
 
-                      <!-- Partager sur WhatsApp -->
-                      <a href="https://api.whatsapp.com/send?text=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #25D366;" class="share-icon">
-                        <i class="bi bi-whatsapp"></i>
-                      </a>
+                        <!-- Partager sur WhatsApp -->
+                        <a href="https://api.whatsapp.com/send?text=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #25D366;" class="share-icon">
+                          <i class="bi bi-whatsapp"></i>
+                        </a>
 
-                      <!-- Partager sur Instagram -->
-                      <a href="https://www.instagram.com/?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #E4405F;" class="share-icon">
-                        <i class="bi bi-instagram"></i>
-                      </a>
+                        <!-- Partager sur Instagram -->
+                        <a href="https://www.instagram.com/?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #E4405F;" class="share-icon">
+                          <i class="bi bi-instagram"></i>
+                        </a>
 
-                      <!-- Partager sur Messenger -->
-                      <a href="https://www.messenger.com/share?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        target="_blank" style="color: #0084FF;" class="share-icon">
-                        <i class="bi bi-messenger"></i>
-                      </a>
+                        <!-- Partager sur Messenger -->
+                        <a href="https://www.messenger.com/share?url=<?= urlencode('https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          target="_blank" style="color: #0084FF;" class="share-icon">
+                          <i class="bi bi-messenger"></i>
+                        </a>
 
-                      <!-- Partager par e-mail -->
-                      <a href="mailto:?subject=<?= urlencode('Regardez cet événement') ?>&body=<?= urlencode('Découvrez cet événement intéressant : https://www.example.com/article?id=' . $row3['id_demande']) ?>"
-                        style="color: #D44638;" class="share-icon">
-                        <i class="bi bi-google"></i>
-                      </a>
+                        <!-- Partager par e-mail -->
+                        <a href="mailto:?subject=<?= urlencode('Regardez cet événement') ?>&body=<?= urlencode('Découvrez cet événement intéressant : https://www.example.com/article?id=' . $row3['id_demande']) ?>"
+                          style="color: #D44638;" class="share-icon">
+                          <i class="bi bi-google"></i>
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
               <?php }
             } ?>
           </div>
@@ -436,17 +439,20 @@ if (isset($_SESSION['cin'])) {
           </style>
           <div class="clearfix">
             <?php
-            $res2 = $pdo->query($req2);
-            $total_records = $res2->rowCount();
-            $total_pages = ceil($total_records / $num_per_page);
-            //echo $total_pages
-            echo "<center>";
-            for ($i = 1; $i <= $total_pages; $i++) {
-              $activeClass = ($i == $page) ? 'active' : ''; // Add active class if current page
-              echo "<a href='Demandes.php?page=" . $i . "' class='btn m-1 pagination-link $activeClass'>$i</a>";
+            $totalResults = $pdo->query($req2)->rowCount();
+            $totalPages = ceil($totalResults / $resultsPerPage);
+            $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
+            $startIndex = ($currentPage - 1) * $resultsPerPage;
+            for ($page = 1; $page <= $totalPages; $page++) {
+              $params = $_GET;
+              $params['page'] = $page;
+              $queryString = http_build_query($params);
+              $activeClass = ($page == $currentPage) ? ' active' : '';
+              echo '<a style="color:white" href="Demandes.php?' . $queryString . '&centre=' . $selectedOption . '" class="btn m-1 pagination-link' . $activeClass . '">' . $page . '</a>';
             }
             ?>
           </div>
+
 
         </div>
 

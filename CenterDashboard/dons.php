@@ -127,8 +127,8 @@ if (isset($_SESSION['id'])) {
                   if (isset($_GET['search-sang'])) {
                     $search_sang = $_GET['search-sang-type'];
                     if ($search_sang != 'Tous') {
-                      $req .= " and m.type_sang like '%$search_sang%'";
-                      $req2 .= " and m.type_sang like '%$search_sang%'";
+                      $req .= " and mem.type_sang like '%$search_sang%'";
+                      $req2 .= " and mem.type_sang like '%$search_sang%'";
                     }
                   }
                   ?>
