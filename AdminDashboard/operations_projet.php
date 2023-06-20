@@ -223,7 +223,7 @@ require('../connexion.php');
             if (is_uploaded_file($_FILES["imgprojets"]["tmp_name"])) {
               unlink($img);
               $num = rand(0, 10000000000000);
-              $nameimg = "../imgsmembre&medecin&projets/imgprojets/$titre" . "-" . date("Y.m.d") . "-" . date("h.i.sa") . ".jpeg";
+              $nameimg = "../imgsmembre&medecin&projets/imgprojets/$num.jpeg";
               $image = move_uploaded_file($_FILES["imgprojets"]["tmp_name"], $nameimg);
               $img = $nameimg;
             }

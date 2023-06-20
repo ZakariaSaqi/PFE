@@ -7,7 +7,7 @@ if (isset($_POST['btn'])) {
     $description = trim($_POST['description']);
     $centre=$_POST['centre'];
     $num = rand(0, 10000000000000);
-    $img = "../imgsmembre&medecin&projets/imgprojets/$titre$num.jpeg";
+    $img = "../imgsmembre&medecin&projets/imgprojets/$num.jpeg";
     $image = move_uploaded_file($_FILES["imgprj"]["tmp_name"], $img); 
     $req = "INSERT INTO campagne (titre_campagne, description_campagne, photo_campagne, date_campagne,id_centre) 
     VALUES ('$titre', '$description', '$img', '$date',$centre)";
